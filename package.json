@@ -1,0 +1,29 @@
+{
+  "name": "react-native-transformable-component",
+  "version": "1.0.0",
+  "description": "react-native-moving-image",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native-component",
+    "react-native",
+    "transformable"
+  ],
+  "author": "Phuc Anthony",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^4.0.0",
+    "eslint-plugin-react": "^7.0.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phucanthony/react-native-transformable-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phucanthony/react-native-transformable-component/issues"
+  },
+  "homepage": "https://github.com/phucanthony/react-native-transformable-component#readme"
+}
