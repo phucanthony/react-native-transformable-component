@@ -7,27 +7,28 @@ This is a very simple Javascript-only library with the usage of React Native.
  
 ## Introduction
  This package allows you to create a component that can be move with one or two fingers.
- Moreover, you can rotate the component by using two fingers at once and rotate by your will.
+ Moreover, you can rotate or zoom the component by using two fingers at once and rotate/zoom by your will.
 
 ## Basic Usage
 
-1. Run `npm install git://git.twin-local.site:react-native-libs/react-native-moving-image.git`  
-1. Import the MovableImage Component in anywhere of your project:
+1. Run `npm install git://github.com/phucanthony/react-native-transformable-component.git`  
+1. Import the TransformableView Component in anywhere of your project:
 
     ```javascript
-    import MovableImage from 'react-native-moving-image'
+    import TransformableView from 'react-native-moving-image'
     
     export default class App extends Component {
 	      render(){
 		       return(
-			        <MovableImage width = {300} height = {100}>
+			        <TransformableView width = {300} height = {100} movable={true} rotatable = {true} zoomable = {true}>
 			            //some components you want to move here
-			        </MovableImage>
+			        </TransformableView>
    		     )
 	      }
      }
     ```
  1. Edit the `width` and the `height` props to fit your Component.
+ 1. Decide if the Component is movable, rotatable or zoomable or not through the `movable`, `zoomable`, `rotatable` props.
  
 ## Contribution
  
