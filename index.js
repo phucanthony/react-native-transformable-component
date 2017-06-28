@@ -1,5 +1,5 @@
 import React, { Component, PropsTypes } from 'react';
-import { Dimensions, View, StyleSheet, PanResponder } from 'react-native'
+import { Dimensions, View, StyleSheet, PanResponder, Image } from 'react-native'
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -14,8 +14,8 @@ export default class TransformableView extends Component {
 		this.imageSize = null;
 		this.rotate = 0;
 		this.scale = 1;
-		this.topBarcode = deviceHeight * 0.3;
-		this.leftBarcode = deviceWidth * 0.15;
+		this.topBarcode = this.props.containerStyle.height * 0.3;
+		this.leftBarcode = this.props.containerStyle.width * 0.15;
 		this.view = null;
 		this.customStyle = {
 			style:{
@@ -52,12 +52,12 @@ export default class TransformableView extends Component {
 				this.viewY = nativeEvent.touches[0].pageY;
 				break;
 			case 2:
-				let midPoint = TransformableView.getMidPoint(nativeEvent);
+				let midPoint = MovableImage.getMidPoint(nativeEvent);
 				this.mode = 'moveRotateZoom';
-				this.deg = TransformableView._twoFinger2Deg(nativeEvent);
+				this.deg = MovableImage._twoFinger2Deg(nativeEvent);
 				this.viewX = midPoint.x;
 				this.viewY = midPoint.y;
-				this.imageSize = TransformableView._twoFingerDistance(nativeEvent);
+				this.imageSize = MovableImage._twoFingerDistance(nativeEvent);
 				break;
 		}
 	}
@@ -98,12 +98,12 @@ export default class TransformableView extends Component {
 		return obj;
 	}
 
-	static getTheLimit(outsideBox,originalWidth,originalHeight,deviceWidth,deviceHeight){
+	static getTheLimit(outsideBox,originalWidth,originalHeight,containerWidth,containerHeight){
 		let limit = {};
 		limit.limitLeft = 0.5 * (outsideBox.width - originalWidth);
 		limit.limitTop = 0.5 * (outsideBox.height - originalHeight);
-		limit.limitRight = deviceWidth - outsideBox.width + limit.limitLeft;
-		limit.limitBottom = deviceHeight - outsideBox.height + limit.limitTop - 25;
+		limit.limitRight = containerWidth - outsideBox.width + limit.limitLeft;
+		limit.limitBottom = containerHeight - outsideBox.height + limit.limitTop - 25;
 		return limit;
 	}
 
@@ -115,8 +115,8 @@ export default class TransformableView extends Component {
 			this.viewY = nativeEvent.touches[0].pageY;
 			this.topBarcode = this.topBarcode - diffY;
 			this.leftBarcode = this.leftBarcode - diffX;
-			let outsideBox = TransformableView.getTheOutsideBox(this.rotate,this.props.width,this.props.height,this.scale);
-			let limit = TransformableView.getTheLimit(outsideBox,this.props.width,this.props.height,deviceWidth,deviceHeight);
+			let outsideBox = MovableImage.getTheOutsideBox(this.rotate,this.props.componentStyle.width,this.props.componentStyle.height,this.scale);
+			let limit = MovableImage.getTheLimit(outsideBox,this.props.componentStyle.width,this.props.componentStyle.height,this.props.containerStyle.width,this.props.containerStyle.height);
 			if(this.topBarcode > limit.limitTop && this.topBarcode < limit.limitBottom
 				&& this.leftBarcode > limit.limitLeft && this.leftBarcode < limit.limitRight){
 				this.customStyle.style.top = this.topBarcode;
@@ -130,15 +130,15 @@ export default class TransformableView extends Component {
 
 	moveTwoFinger(nativeEvent){
 		if(this.viewX !== null && this.viewY !== null){
-			let midPointAfter = TransformableView.getMidPoint(nativeEvent);
+			let midPointAfter = MovableImage.getMidPoint(nativeEvent);
 			const diffX = this.viewX - midPointAfter.x;
 			const diffY = this.viewY - midPointAfter.y;
 			this.viewX = midPointAfter.x;
 			this.viewY = midPointAfter.y;
 			this.topBarcode = this.topBarcode - diffY;
 			this.leftBarcode = this.leftBarcode - diffX;
-			let outsideBox = TransformableView.getTheOutsideBox(this.rotate,this.props.width,this.props.height,this.scale);
-			let limit = TransformableView.getTheLimit(outsideBox,this.props.width,this.props.height,deviceWidth,deviceHeight);
+			let outsideBox = MovableImage.getTheOutsideBox(this.rotate,this.props.componentStyle.width,this.props.componentStyle.height,this.scale);
+			let limit = MovableImage.getTheLimit(outsideBox,this.props.componentStyle.width,this.props.componentStyle.height,this.props.containerStyle.width,this.props.containerStyle.height);
 			if(this.topBarcode > limit.limitTop && this.topBarcode < limit.limitBottom
 				&& this.leftBarcode > limit.limitLeft && this.leftBarcode < limit.limitRight){
 				this.customStyle.style.top = this.topBarcode;
@@ -152,19 +152,19 @@ export default class TransformableView extends Component {
 
 	rotateBarcode(nativeEvent){
 		if(this.deg!==null){
-			const fingerDeg = TransformableView._twoFinger2Deg(nativeEvent);
+			const fingerDeg = MovableImage._twoFinger2Deg(nativeEvent);
 			const diffDeg = this.deg - fingerDeg;
 			this.deg = fingerDeg;
 			this.rotate-=diffDeg;
 			this.customStyle.style.transform = [{rotate: this.rotate + 'deg'}, {scale: this.scale}];
-			let outsideBox = TransformableView.getTheOutsideBox(this.rotate,this.props.width,this.props.height,this.scale);
-			if (outsideBox.width < deviceWidth && outsideBox.height < deviceHeight && this.scale > 0.2){
+			let outsideBox = MovableImage.getTheOutsideBox(this.rotate,this.props.componentStyle.width,this.props.componentStyle.height,this.scale);
+			if (outsideBox.width < this.props.containerStyle.width && outsideBox.height < this.props.containerStyle.height && this.scale > 0.2){
 				this.customStyle.style.transform = [{rotate: this.rotate + 'deg'}, {scale: this.scale}];
 			}
 			else {
-				this.resizeBarcode(outsideBox,this.props.width,this.props.height,this.rotate)
+				this.resizeBarcode(outsideBox,this.props.componentStyle.width,this.props.componentStyle.height,this.rotate)
 			}
-			let limit = TransformableView.getTheLimit(outsideBox,this.props.width,this.props.height,deviceWidth,deviceHeight);
+			let limit = MovableImage.getTheLimit(outsideBox,this.props.componentStyle.width,this.props.componentStyle.height,this.props.containerStyle.width,this.props.containerStyle.height);
 			this.relocateBarcode(limit);
 			this.updateNativeProps()
 		}
@@ -172,16 +172,16 @@ export default class TransformableView extends Component {
 
 	zoomBarcode(nativeEvent){
 		if(this.imageSize !== null){
-			let distanceAfter = TransformableView._twoFingerDistance(nativeEvent);
+			let distanceAfter = MovableImage._twoFingerDistance(nativeEvent);
 			const scaleChange = distanceAfter / this.imageSize;
 			this.imageSize = distanceAfter;
 			this.scale = this.scale * scaleChange;
-			let outsideBox = TransformableView.getTheOutsideBox(this.rotate,this.props.width,this.props.height,this.scale);
-			if (outsideBox.width < deviceWidth && outsideBox.height < deviceHeight && this.scale > 0.2){
+			let outsideBox = MovableImage.getTheOutsideBox(this.rotate,this.props.componentStyle.width,this.props.componentStyle.height,this.scale);
+			if (outsideBox.width < this.props.containerStyle.width && outsideBox.height < this.props.containerStyle.height && this.scale > 0.2){
 				this.customStyle.style.transform = [{rotate: this.rotate + 'deg'}, {scale: this.scale}];
 			}
 			else {
-				this.resizeBarcode(outsideBox,this.props.width,this.props.height,this.rotate)
+				this.resizeBarcode(outsideBox,this.props.componentStyle.width,this.props.componentStyle.height,this.rotate)
 			}
 			this.updateNativeProps()
 		}
@@ -201,12 +201,12 @@ export default class TransformableView extends Component {
 			this.scale = 0.2;
 			this.customStyle.style.transform = [{rotate: this.rotate + 'deg'}, {scale: this.scale}]
 		}
-		if(outsideBox.width >= deviceWidth){
-			this.scale = deviceWidth / (originalWidth * Math.cos(rotateRad) + originalHeight * Math.sin(rotateRad));
+		if(outsideBox.width >= this.props.containerStyle.width){
+			this.scale = this.props.containerStyle.width / (originalWidth * Math.cos(rotateRad) + originalHeight * Math.sin(rotateRad));
 			this.customStyle.style.transform = [{rotate: this.rotate + 'deg'}, {scale: this.scale}]
 		}
-		if(outsideBox.height >= deviceHeight){
-			this.scale = deviceHeight / (originalWidth * Math.sin(rotateRad) + originalHeight * Math.cos(rotateRad));
+		if(outsideBox.height >= this.props.containerStyle.height){
+			this.scale = this.props.containerStyle.height / (originalWidth * Math.sin(rotateRad) + originalHeight * Math.cos(rotateRad));
 			this.customStyle.style.transform = [{rotate: this.rotate + 'deg'}, {scale: this.scale}]
 		}
 	}
@@ -234,6 +234,10 @@ export default class TransformableView extends Component {
 		}
 	}
 
+	doNothing(){
+
+	}
+
 	_onPanResponderMove({ nativeEvent }: Object, gesture: Object) {
 		let fingerCount = nativeEvent.touches.length;
 		switch (this.mode) {
@@ -252,7 +256,6 @@ export default class TransformableView extends Component {
 	}
 
 	_onPanResponderRelease({ nativeEvent }: Object, gesture: Object){
-		console.log('release:',this.mode);
 		this.deg=null;
 		this.viewX = null;
 		this.viewY = null;
@@ -260,20 +263,33 @@ export default class TransformableView extends Component {
 		this.imageSize = null;
 	}
 
-	doNothing(){
-
-	}
-
 	render(){
 		return(
-			<View style={{flex: 1,backgroundColor:'transparent'}}  {...this.panResponder.panHandlers}>
-				<View ref={(view)=> this.view=view}   style={[styles.image, {width: this.props.width, height: this.props.height}]} accessibilityLabel = {this.props.ID}>
-					{this.props.children}
+			<View style={this.props.containerStyle}  {...this.panResponder.panHandlers}>
+				<View ref={(view)=> this.view=view}
+							style={[styles.image, {width: this.props.componentStyle.width, height: this.props.componentStyle.height}]}
+							accessibilityLabel = {this.props.ID}>
+					<Image source={this.props.image} style={this.props.componentStyle} resizeMode="stretch"/>
 				</View>
 			</View>
 		)
 	}
 }
+
+MovableImage.defaultProps = {
+	containerStyle: {
+		height: deviceHeight,
+		width: deviceWidth,
+		backgroundColor: 'transparent'
+	},
+	componentStyle: {
+		width: deviceWidth * 0.7,
+		height: deviceHeight * 0.15,
+	},
+	movable: true,
+	rotatable: true,
+	zoomable: true,
+};
 
 const styles = StyleSheet.create({
 	image:{

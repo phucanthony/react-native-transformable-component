@@ -20,15 +20,17 @@ This is a very simple Javascript-only library with the usage of React Native.
     export default class App extends Component {
 	      render(){
 		       return(
-			        <TransformableView width = {300} height = {100} movable={true} rotatable = {true} zoomable = {true}>
-			            //some components you want to move here
-			        </TransformableView>
+			        <TransformableView 
+             containerStyle={{ width: 500, height: 500}}
+             componentStyle={{ width: 100, height: 100}}
+             image={require('some link image')}
+           />
    		     )
 	      }
      }
     ```
- 1. Edit the `width` and the `height` props to fit your Component.
- 1. Decide if the Component is movable, rotatable or zoomable or not through the `movable`, `zoomable`, `rotatable` props.
+ 1. Edit the `componentStyle` and the `containerStyle` props to fit your Component.
+ 1. Decide if the Component is movable, rotatable or zoomable or not through the `movable`, `zoomable`, `rotatable` props. Default value is `true`.
  
 ## Contribution
  
